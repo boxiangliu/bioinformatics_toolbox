@@ -4,18 +4,22 @@
 # arg1	
 # arg2 
 
+set -u 
+set -e 
+
 # read command line arguments: 
 input_dir=$1
 output_dir=$1 
-log=$output_dir/$(basename $0 .sh)
+log=$output_dir/$(basename $0 .sh).log
 
 
 # DO NOT MODIFY:
-$software=/srv/gs1/software/
+software=/srv/gs1/software/
 hg19=/srv/gs1/projects/montgomery/bliu2/shared/ucsc_hg19/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa
 gatk=$software/gatk/gatk-3.3.0/GenomeAnalysisTK.jar
 picard=$software/picard-tools/1.111
 bwa=/srv/gs1/software/bwa/bwa-0.7.7/bin/bwa
+star_genome=/srv/gs1/projects/montgomery/tnance/genomes/STAR/hg19_gencode14_overhang99
 
 
 # create array to store all sorted bam file names
