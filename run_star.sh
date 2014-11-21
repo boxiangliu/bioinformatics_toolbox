@@ -20,7 +20,7 @@ read2_extension=_R2_001.fastq.gz
 #$ -N STAR
 # 
 # Array Job 
-#$ -t 1-51
+#$ -t 1-97
 # 
 # Request Large Memory Machine  
 #$ -P large_mem
@@ -99,14 +99,14 @@ read2=${read1/R1/R2}
 prefix=$(basename $read1 $read1_extension)
 
 if [ $read_mode == "q" ]; then 
-	STAR --genomeDir $star_genome --readFilesIn $input_dir/$read1 $input_dir/$read2 --readFilesCommand zcat --outFileNamePrefix $output_dir/${prefix}. --runThreadN 10
+	STAR --genomeDir $star_genome_v21 --readFilesIn $input_dir/$read1 $input_dir/$read2 --readFilesCommand zcat --outFileNamePrefix $output_dir/${prefix}. --runThreadN 10
 	echo "Aligning single-ended reads." 
 elif [ $read_mode == "s" ]; then
-	STAR --genomeDir $star_genome --readFilesIn $input_dir/$read1 --readFilesCommand zcat --outFileNamePrefix $output_dir/${prefix}. --runThreadN 10
+	STAR --genomeDir $star_genome_v21 --readFilesIn $input_dir/$read1 --readFilesCommand zcat --outFileNamePrefix $output_dir/${prefix}. --runThreadN 10
 	echo "Aligning paired-ended reads." 
 else 
 	echo "Run mode is neither [s]ingle or [p]aired-end." ; exit 1
 fi
 
 STAR --genomeDir $star_genome --genomeLoad Remove
-echo "FINISH: $(date)" | tee -a $log 
+echo "FINISH: $(date)" | tee -a $log ; touch $prefix.done

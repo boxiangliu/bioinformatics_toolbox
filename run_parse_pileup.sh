@@ -2,30 +2,24 @@
 
 # Usage: 
 # 
-# Run qsub array jobs on all files in a directory. 
-# To uses this script, 
-# 1. change the second parameters of -t to the number of jobs you need to run. 
-# 2. assign your input file extension to the variable extension, and output file extension to output_extension.
-# 3. add you command on line "your comment here:"
-# 4. if your array jobs require large memory, enable -P large_mem and -l h_vmem=40G.
-# 
 # SCG SETTINGS: 
-# -t 1:<num of jobx>
+# -t 1:<num of jobs>
 # 
 # CMD ARGS:
 # arg1	input dir
 # arg2	output dir
-# 
-# MODIFY: 
-extension=""
-output_extension=""
+#
+# MODIFY
+extension="pileup"
+output_extension="zpileup"
+
 
 ################# SCG settings ################### 
 # Job Name 
-#$ -N template
+#$ -N parse_pileup
 # 
 # Array Job 
-#$ -t 1-2
+#$ -t 1-97
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -34,13 +28,13 @@ output_extension=""
 # -l h_vmem=40G 
 #
 # maximum run time 
-#$ -l h_rt=96:00:00  
+# -l h_rt=96:00:00  
 # 
 # check for errors in the job submission options
 #$ -w e
 # 
 # run on multiple threads                     
-#$ -pe shm 4                                 
+# -pe shm 4                                 
 #
 # run job in current working directory      
 #$ -cwd                                    
@@ -74,8 +68,7 @@ python=/home/bliu2/anaconda/bin/python
 gencode14=/srv/gs1/projects/montgomery/shared/annotation/gencode.v14.annotation.gtf
 gencode21=/srv/gs1/projects/montgomery/shared/annotation/gencode.v21.annotation.gtf
 module load java 
-bpt=/srv/gs1/projects/montgomery/bliu2/bpt
-brt=/srv/gs1/projects/montgomery/bliu2/brt
+parse_pileup=/srv/gs1/projects/montgomery/labCode/ase/parse_pileup.py
 
 # create array to store all sorted bam file names
 cd $input_dir
@@ -83,7 +76,7 @@ inputs=(*.$extension) # put the file extension here.
 i=$((SGE_TASK_ID-1))
 output=${inputs[$i]/$extension/$output_extension}
 
-# your command here: 
+cat ${inputs[$i]} | $python $parse_pileup > $output_dir/$output
 
-touch $output_dir/$output.done  
+touch ${inputs[$i]}.done  
 

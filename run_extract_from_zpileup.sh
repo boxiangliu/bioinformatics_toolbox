@@ -2,13 +2,6 @@
 
 # Usage: 
 # 
-# Run qsub array jobs on all files in a directory. 
-# To uses this script, 
-# 1. change the second parameters of -t to the number of jobs you need to run. 
-# 2. assign your input file extension to the variable extension, and output file extension to output_extension.
-# 3. add you command on line "your comment here:"
-# 4. if your array jobs require large memory, enable -P large_mem and -l h_vmem=40G.
-# 
 # SCG SETTINGS: 
 # -t 1:<num of jobx>
 # 
@@ -17,15 +10,15 @@
 # arg2	output dir
 # 
 # MODIFY: 
-extension=""
-output_extension=""
+extension="zpileup"
+output_extension="150aims.zpileup"
 
 ################# SCG settings ################### 
 # Job Name 
-#$ -N template
+#$ -N extract_from_zpileup
 # 
 # Array Job 
-#$ -t 1-2
+#$ -t 1-97
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -74,8 +67,8 @@ python=/home/bliu2/anaconda/bin/python
 gencode14=/srv/gs1/projects/montgomery/shared/annotation/gencode.v14.annotation.gtf
 gencode21=/srv/gs1/projects/montgomery/shared/annotation/gencode.v21.annotation.gtf
 module load java 
-bpt=/srv/gs1/projects/montgomery/bliu2/bpt
 brt=/srv/gs1/projects/montgomery/bliu2/brt
+aims=/srv/gs1/projects/montgomery/bliu2/ancestry/data/autosomes/2popaims_wlrld2M_150.aims.snpinfo
 
 # create array to store all sorted bam file names
 cd $input_dir
@@ -83,7 +76,7 @@ inputs=(*.$extension) # put the file extension here.
 i=$((SGE_TASK_ID-1))
 output=${inputs[$i]/$extension/$output_extension}
 
-# your command here: 
+$python $bt/extract_from_zpileup.py $aims $inputs[$i] $output_dir/$output
 
 touch $output_dir/$output.done  
 
