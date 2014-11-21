@@ -6,19 +6,18 @@
 # -t 1:<num of jobx>
 # 
 # CMD ARGS:
-# arg1	input dir
-# arg2	output dir
+# arg1	bam dir
+# arg2	count dir
 # 
 # MODIFY: 
-extension=""
-output_extension=""
-
+extension="dedup.bam"
+output_extension="count"
 ################# SCG settings ################### 
 # Job Name 
 #$ -N HTSeq_count
 # 
 # Array Job 
-#$ -t 1-2
+#$ -t 1-20
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -73,8 +72,7 @@ cd $input_dir
 inputs=(*.$extension) # put the file extension here. 
 i=$((SGE_TASK_ID-1))
 output=${inputs[$i]/$extension/$output_extension}
+$python $htseq/htseq-count --format=bam --stranded=yes --idattr=gene_name --type=gene ${inputs[$i]} $gencode14 > $output_dir/$output
 
-# your command here: 
-
-touch ${inputs[$i]}.done  
+touch $output_dir/$output.done  
 
