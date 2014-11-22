@@ -33,7 +33,7 @@ output_extension="150aims.zpileup"
 #$ -w e
 # 
 # run on multiple threads                     
-#$ -pe shm 4                                 
+# -pe shm 4                                 
 #
 # run job in current working directory      
 #$ -cwd                                    
@@ -68,15 +68,20 @@ gencode14=/srv/gs1/projects/montgomery/shared/annotation/gencode.v14.annotation.
 gencode21=/srv/gs1/projects/montgomery/shared/annotation/gencode.v21.annotation.gtf
 module load java 
 brt=/srv/gs1/projects/montgomery/bliu2/brt
+bt=/srv/gs1/projects/montgomery/bliu2/bioinformatics_toolbox
 aims=/srv/gs1/projects/montgomery/bliu2/ancestry/data/autosomes/2popaims_wlrld2M_150.aims.snpinfo
 
 # create array to store all sorted bam file names
 cd $input_dir
 inputs=(*.$extension) # put the file extension here. 
-i=$((SGE_TASK_ID-1))
-output=${inputs[$i]/$extension/$output_extension}
+# i=$((SGE_TASK_ID-1))
+# echo ${inputs[$i]}
+# echo $output
 
-$python $bt/extract_from_zpileup.py $aims $inputs[$i] $output_dir/$output
+for input in ${inputs[*]}; do 
+	output=${input/$extension/$output_extension}
 
-touch $output_dir/$output.done  
-
+	# $python $bt/extract_from_zpileup.py $aims ${inputs[$i]} $output_dir/$output
+	$python $bt/extract_from_zpileup.py $aims $input_dir/$input $output_dir/$output
+	touch $output_dir/$output.done  
+done 

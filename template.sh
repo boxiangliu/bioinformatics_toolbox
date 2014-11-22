@@ -74,12 +74,12 @@ python=/home/bliu2/anaconda/bin/python
 gencode14=/srv/gs1/projects/montgomery/shared/annotation/gencode.v14.annotation.gtf
 gencode21=/srv/gs1/projects/montgomery/shared/annotation/gencode.v21.annotation.gtf
 module load java 
-bpt=/srv/gs1/projects/montgomery/bliu2/bpt
+bt=/srv/gs1/projects/montgomery/bliu2/bioinformatics_toolbox
 brt=/srv/gs1/projects/montgomery/bliu2/brt
 
 # create array to store all sorted bam file names
 cd $input_dir
-inputs=(*.$extension) # put the file extension here. 
+inputs=(*$extension) # put the file extension here. 
 i=$((SGE_TASK_ID-1))
 output=${inputs[$i]/$extension/$output_extension}
 
