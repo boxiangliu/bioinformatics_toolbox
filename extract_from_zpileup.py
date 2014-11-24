@@ -13,6 +13,12 @@ Modify the format that describes the position of chromosome and position in the 
 """
 target_sites_format = {'chr_field': 0, 'pos_field': 1}
 
+# tests 
+#target_sites_filename = '/Users/boshliu/research/montgomery_lab/projects/sc_mmPCRseq/data/nmeth.2736-S2_mmPCR_Primer_List_BLmod.txt'
+#zpileup_filename = '/Users/boshliu/research/montgomery_lab/projects/sc_mmPCRseq/tests/Undetermined_S0_L001.Aligned.out.chr21.zpileup'
+#output_filename = '/Users/boshliu/research/montgomery_lab/projects/sc_mmPCRseq/tests/Undetermined_S0_L001.Aligned.out.chr21.150aims.zpileup'
+#target_sites = target_sites.readlines()
+
 import sys 
 target_sites_filename = sys.argv[1]
 zpileup_filename = sys.argv[2]
@@ -37,6 +43,7 @@ for line in target_sites:
 	if 'chr' in chr: chr = chr[3:] 
 	pos = split_line[target_sites_format['pos_field']]
 	if (chr, pos) in zpileup_locations:
+		print zpileup_locations[(chr,pos)]
 		output.write(zpileup_locations[(chr,pos)])
 	else: 
 		output.write("chr%s\t%s\n"%(chr,pos))
