@@ -19,7 +19,7 @@ output_extension="zpileup"
 #$ -N parse_pileup
 # 
 # Array Job 
-#$ -t 1-97
+#$ -t 1-51
 # 
 # Request Large Memory Machine  
 # -P large_mem

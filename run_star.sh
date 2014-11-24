@@ -11,8 +11,8 @@
 # arg3	s (single) or p (paired-end), default to p. 
 # 
 # MODIFY:
-read1_extension=_R1_001.fastq.gz
-read2_extension=_R2_001.fastq.gz
+read1_extension=_R1_001_trimmed.fq.gz
+read2_extension=_R2_001_trimmed.fq.gz
 
 
 ################# SCG settings ################### 
@@ -20,7 +20,7 @@ read2_extension=_R2_001.fastq.gz
 #$ -N STAR
 # 
 # Array Job 
-#$ -t 1-97
+#$ -t 1-51
 # 
 # Request Large Memory Machine  
 #$ -P large_mem
@@ -98,15 +98,15 @@ read1=${fastq_R1[$i]}
 read2=${read1/R1/R2}
 prefix=$(basename $read1 $read1_extension)
 
-if [ $read_mode == "q" ]; then 
+if [ $read_mode == "p" ]; then 
 	STAR --genomeDir $star_genome_v21 --readFilesIn $input_dir/$read1 $input_dir/$read2 --readFilesCommand zcat --outFileNamePrefix $output_dir/${prefix}. --runThreadN 10
-	echo "Aligning single-ended reads." 
+	echo "Aligning paired-ended reads." 
 elif [ $read_mode == "s" ]; then
 	STAR --genomeDir $star_genome_v21 --readFilesIn $input_dir/$read1 --readFilesCommand zcat --outFileNamePrefix $output_dir/${prefix}. --runThreadN 10
-	echo "Aligning paired-ended reads." 
+	echo "Aligning single-ended reads." 
 else 
 	echo "Run mode is neither [s]ingle or [p]aired-end." ; exit 1
 fi
 
-STAR --genomeDir $star_genome --genomeLoad Remove
+STAR --genomeDir $star_genome_v21 --genomeLoad Remove
 echo "FINISH: $(date)" | tee -a $log ; touch $prefix.done

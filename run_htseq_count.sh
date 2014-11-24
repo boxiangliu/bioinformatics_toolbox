@@ -17,7 +17,7 @@ output_extension="count"
 #$ -N HTSeq_count
 # 
 # Array Job 
-#$ -t 1-20
+#$ -t 1-388
 # 
 # Request Large Memory Machine  
 # -P large_mem

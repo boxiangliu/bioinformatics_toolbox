@@ -13,7 +13,7 @@
 #$ -N MarkDuplicate
 # 
 # Number of Jobs 
-#$ -t 1-20
+#$ -t 1-388
 # tell the scheduler this takes a lot of memory 
 # -P large_mem
 # 
@@ -30,7 +30,7 @@
 #$ -pe shm 4                                 
 #
 # run job in current working directory      
-# -cwd                                    
+#$ -cwd                                    
 #
 # set the output file
 #$ -o  MarkDuplicate.log
@@ -69,7 +69,7 @@ inputs=(*.sorted.bam) # put the file extension here.
 # echo "START: $(date)" | tee -a $log
 
 i=$((SGE_TASK_ID-1))
-output=${inputs[$i]/sorted.bam/dedup.bam} ; echo $output
+output=${inputs[$i]/sorted.bam/sorted.dedup.bam} ; echo $output
 metrics=${inputs[$i]/sorted.bam/metrics.txt}; echo $metrics 
 java -Xmx4g -jar $picard/MarkDuplicates.jar INPUT=$output_dir/${inputs[$i]} OUTPUT=$output_dir/$output METRICS_FILE=$output_dir/$metrics
 echo $output_dir/${inputs[$i]}.done 

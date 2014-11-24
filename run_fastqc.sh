@@ -3,8 +3,9 @@
 # Usage:
 # arg1	fastq directory 
 # arg2	fastQC directory
-# arg3	filename, e.g. "*.fastq.gz". MAKE SURE TO INCLUE THE QUOTATION MARK "". 
 
+# MODIFY
+extension="fastq.trimmed.gz"
 
 set -u 
 set -e 
@@ -19,7 +20,7 @@ log=$output_dir/$(basename $0 .sh).log
 
 # create an array of all fastq files: 
 cd $input_dir 
-fastq_files=($3)
+fastq_files=(*.$extension)
 length=${#fastq_files[*]}
 echo "$length files..."
 #### call fastqc #### 

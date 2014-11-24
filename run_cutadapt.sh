@@ -2,7 +2,8 @@
 # INPUT: 
 # arg1	input directory with fastq files 
 # arg2	output directory where you want the trimmed fastq files to go. 
-
+# MODIFY THE EXTENSION 
+extension="_L001_R1_001.fastq.gz"
 
 set -u 
 set -e 
@@ -18,9 +19,10 @@ adapter="AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG"
 
 # create an array of all fastq files:  
 cd $input_dir
-fastq_files=(*_L001_R1_001.fastq.gz)
+fastq_files=(*$extension)
 length=${#fastq_files[*]}
 
+echo "START: $(date)" > $output_dir/run_cutadapt.log 
 echo "File List\n" >> $output_dir/run_cutadapt.log 
 echo ${fastq_files[*]} >> $output_dir/run_cutadapt.log 
 echo "$length files..."
@@ -32,4 +34,4 @@ for orig in ${fastq_files[*]}; do
 	cutadapt -a $adapter -o $output_dir/$trimmed $input_dir/$orig > $output_dir/$log
 done 
 
-
+echo "FINISH: $(date)" >> $output_dir/run_cutadapt.log 
