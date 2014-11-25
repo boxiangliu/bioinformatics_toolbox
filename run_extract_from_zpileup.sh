@@ -8,7 +8,7 @@
 # CMD ARGS:
 # arg1	input dir
 # arg2	output dir
-# 
+# arg3 	file containing target sites  
 # MODIFY: 
 extension="zpileup"
 output_extension="150aims.zpileup"
@@ -18,7 +18,7 @@ output_extension="150aims.zpileup"
 #$ -N extract_from_zpileup
 # 
 # Array Job 
-#$ -t 1-97
+#$ -t 1-1
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -52,6 +52,7 @@ set -e
 # read command line arguments: 
 input_dir=$1
 output_dir=$2 
+target_sites_file=$3
 log=$output_dir/$(basename $0 .sh).log
 
 
@@ -82,6 +83,6 @@ for input in ${inputs[*]}; do
 	output=${input/$extension/$output_extension}
 
 	# $python $bt/extract_from_zpileup.py $aims ${inputs[$i]} $output_dir/$output
-	$python $bt/extract_from_zpileup.py $aims $input_dir/$input $output_dir/$output
+	$python $bt/extract_from_zpileup.py $target_sites_file $input_dir/$input $output_dir/$output
 	touch $output_dir/$output.done  
 done 

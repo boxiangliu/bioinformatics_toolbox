@@ -5,19 +5,13 @@ Created on Thu Nov 20 21:40:53 2014
 @author: boshliu
 
 Usage:
-arg1 file1 with sites of interest
+arg1 target sites file
 arg2 zpileup file 
 arg3 zpileup file with only sites of interest
 
 Modify the format that describes the position of chromosome and position in the target_sites file. 
 """
-target_sites_format = {'chr_field': 0, 'pos_field': 1}
-
-# tests 
-#target_sites_filename = '/Users/boshliu/research/montgomery_lab/projects/sc_mmPCRseq/data/nmeth.2736-S2_mmPCR_Primer_List_BLmod.txt'
-#zpileup_filename = '/Users/boshliu/research/montgomery_lab/projects/sc_mmPCRseq/tests/Undetermined_S0_L001.Aligned.out.chr21.zpileup'
-#output_filename = '/Users/boshliu/research/montgomery_lab/projects/sc_mmPCRseq/tests/Undetermined_S0_L001.Aligned.out.chr21.150aims.zpileup'
-#target_sites = target_sites.readlines()
+target_sites_format = {'chr_field': 0, 'pos_field': 2}
 
 import sys 
 target_sites_filename = sys.argv[1]
@@ -30,7 +24,7 @@ lines_to_find = []
 
 zpileup_locations = {}
 for line in zpileup:
-	split_line = line.strip().split()
+	split_line = line.strip().split('\t')
 	chr = split_line[0][3:]
 	pos = split_line[1]
 	zpileup_locations[(chr,pos)] = line 
@@ -38,12 +32,11 @@ for line in zpileup:
 
 for line in target_sites:
 	if 'position' in line.strip(): continue 
-	split_line = line.strip().split()
+	split_line = line.strip().split('\t')
 	chr = split_line[target_sites_format['chr_field']]
 	if 'chr' in chr: chr = chr[3:] 
 	pos = split_line[target_sites_format['pos_field']]
 	if (chr, pos) in zpileup_locations:
-		print zpileup_locations[(chr,pos)]
 		output.write(zpileup_locations[(chr,pos)])
 	else: 
 		output.write("chr%s\t%s\n"%(chr,pos))

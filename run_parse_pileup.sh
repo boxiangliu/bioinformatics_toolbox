@@ -78,5 +78,5 @@ output=${inputs[$i]/$extension/$output_extension}
 
 cat ${inputs[$i]} | $python $parse_pileup -q 30 > $output_dir/$output
 
-touch ${inputs[$i]}.done  
+touch $output.done  
 
