@@ -17,15 +17,15 @@
 # -o	output dir
 # 
 # MODIFY: 
-input_extension=""
-output_extension=""
+input_extension="sam"
+output_extension="sorted.bam"
 
 ################# SCG settings ################### 
 # Job Name 
-#$ -N template
+#$ -N compress_sort_and_index 
 # 
 # Array Job 
-#$ -t 1-2
+#$ -t 1-97
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -57,6 +57,11 @@ set -u
 set -e 
 
 # read command line arguments: 
+
+set -u 
+set -e 
+
+# read command line arguments: 
 parrot=true 
 while getopts ":i:o:" opt; do 
 	case $opt in 
@@ -72,10 +77,11 @@ while getopts ":i:o:" opt; do
 done 
 
 
+# input_dir=$1
+# output_dir=$2 
 log=$output_dir/$(basename $0 .sh).log
 
-
-# Paths:
+# DO NOT MODIFY:
 software=/srv/gs1/software/
 hg19=/srv/gs1/projects/montgomery/bliu2/shared/ucsc_hg19/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa
 gatk=$software/gatk/gatk-3.3.0/GenomeAnalysisTK.jar
@@ -90,18 +96,18 @@ gencode21=/srv/gs1/projects/montgomery/shared/annotation/gencode.v21.annotation.
 module load java 
 bt=/srv/gs1/projects/montgomery/bliu2/bioinformatics_toolbox
 brt=/srv/gs1/projects/montgomery/bliu2/brt
-module load samtools/1.1
-sh $bt/assert.sh 
+
 # create array to store all sorted bam file names
 cd $input_dir
 inputs=(*$input_extension) # put the file extension here. 
 i=$((SGE_TASK_ID-1))
+sam={inputs[$i]/$input_extension/$output_extension}
 output=${inputs[$i]/$input_extension/$output_extension}
 
 start=$(date)
 
-# your command here: 
+java -Xmx2g -jar $picard/SortSam.jar INPUT=$input_dir/${inputs[$i]} OUTPUT=/dev/stdout SORT_ORDER=coordinate | \
+java -Xmx2g -jar $picard/SamFormatConverter.jar INPUT=/dev/stdin OUTPUT=$output_dir/$output  CREATE_INDEX=true
 
 finish=$(date)
 touch $output_dir/$output.done; echo -e "START: $start\nFINISH: $finish" > $output_dir/$output.done
-

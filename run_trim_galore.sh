@@ -14,14 +14,14 @@
 # MODIFY:
 read1_extension=_R1_001.fastq.gz
 read2_extension=_R2_001.fastq.gz
-min_qual=30
+min_qual=20
 
 ################# SCG settings ################### 
 # Job Name 
 #$ -N run_trim_galore
 # 
 # Array Job 
-#$ -t 1-51
+#$ -t 1-97
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -82,7 +82,7 @@ prefix=$(basename $read1 $read1_extension)
 
 if [ $read_mode == "p" ]; then 
 	echo "Paired-ended reads." 
-	trim_galore --paired -q $min_qual --phred33 --fastqc --fastqc_args "--output_dir $fastqc_dir" --output_dir $output_dir --adapter $adapter --adapter2 $adapter2 --stringency 1 $read1 $read2
+	trim_galore --paired -q $min_qual --phred33 --fastqc --fastqc_args "--output_dir $fastqc_dir" --output_dir $output_dir --adapter $adapter_full --adapter2 $adapter2 --stringency 1 $read1 $read2
 	# --paired 		paired-end reads
 	# -q			quality cutoff for trimming, default 20
 	# --phred33		Sanger/Illumina 1.9+ encoding 
@@ -90,21 +90,22 @@ if [ $read_mode == "p" ]; then
 	# --fastqc_args fastqc arguments 
 	# --adapter 	adapter sequences 
 	# --stringency 	minimum number of adapter-overlapping bases for trimming
-
+	touch $read1.done $read2.done 
 	
 elif [ $read_mode == "s" ]; then
 	echo "Single-ended reads." 
-	trim_galore -q $min_qual --phred33 --fastqc --fastqc_args "--output_dir $fastqc_dir" --output_dir $output_dir --adapter $adapter --stringency 1 $read1
+	trim_galore -q $min_qual --phred33 --fastqc --fastqc_args "--output_dir $fastqc_dir" --output_dir $output_dir --adapter $adapter_full --stringency 1 $read1
 	# -q			quality cutoff for trimming, default 20
 	# --phred33		Sanger/Illumina 1.9+ encoding 
 	# --fastqc_dir 	run fastqc after trimming
 	# --fastqc_args fastqc arguments 
 	# --adapter 	adapter sequences 
 	# --stringency 	minimum number of adapter-overlapping bases for trimming
-	
+	touch $read1.done
+
 else 
 	echo "Run mode is neither [s]ingle or [p]aired-end." ; exit 1
 
 fi
 
-echo "FINISH: $(date)" | tee -a $log ; touch $prefix.done
+echo "FINISH: $(date)" | tee -a $log
