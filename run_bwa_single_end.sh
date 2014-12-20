@@ -25,7 +25,7 @@ output_extension=".sam"
 #$ -N BWA_MEM
 # 
 # Array Job 
-#$ -t 1-97
+#$ -t 1-20
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -97,9 +97,15 @@ i=$((SGE_TASK_ID-1))
 output=${inputs[$i]/$extension/$output_extension}
 
 start=$(date)
+#
+# Using hg19:
+#
+# $bwa mem -t 8 -M -R '@RG\tID:group1\tSM:sample1\tPL:illumina\tLB:lib1\tPU:unit1' $BWAIndex $input_dir/${inputs[$i]} > $output_dir/$output
+#
+# Using custom genome: 
+#
+$bwa mem -t 8 -M -R '@RG\tID:group1\tSM:sample1\tPL:illumina\tLB:lib1\tPU:unit1' /srv/gs1/projects/montgomery/bliu2/ancestry/data/Bosh_ASW_mmPCR_2/targeted_reference_genome/hg19_150_aims.fa $input_dir/${inputs[$i]} > $output_dir/$output
 
-# $bwa mem -M -R '@RG\tID:group1\tSM:sample1\tPL:illumina\tLB:lib1\tPU:unit1' $BWAIndex $input_dir/${inputs[$i]} > $output_dir/$output
-$bwa mem -M -R '@RG\tID:group1\tSM:sample1\tPL:illumina\tLB:lib1\tPU:unit1' /srv/gs1/projects/montgomery/bliu2/ancestry/data/Bosh_ASW_mmPCR_2/targeted_reference_genome/hg19_150_aims.fa $input_dir/${inputs[$i]} > $output_dir/$output
 finish=$(date)
 
 touch $output_dir/$output.done; echo -e "START: $start\nFINISH: $finish" > $output_dir/$output.done

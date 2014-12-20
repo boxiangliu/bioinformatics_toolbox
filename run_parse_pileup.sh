@@ -6,8 +6,8 @@
 # -t 1:<num of jobs>
 # 
 # CMD ARGS:
-# arg1	input dir
-# arg2	output dir
+# -i	input dir
+# -o	output dir
 #
 # MODIFY
 extension="pileup"
@@ -19,7 +19,7 @@ output_extension="zpileup"
 #$ -N parse_pileup
 # 
 # Array Job 
-#$ -t 1-51
+# -t 1-51
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -51,9 +51,22 @@ set -u
 set -e 
 
 # read command line arguments: 
-input_dir=$1
-output_dir=$2 
+parrot=true
+while getopts ":i:o:" opt; do 
+	case $opt in 
+		i) input_dir=$OPTARG
+		[ $parrot ] & echo "INPUT: $input_dir"
+		;;
+		o) output_dir=$OPTARG
+		[ $parrot ] & echo "OUTPUT: $output_dir"
+		;;
+		\?) echo "Invalid option -$OPTARG"; exit 1
+		;;
+	esac
+done 
+
 log=$output_dir/$(basename $0 .sh).log
+
 
 
 # DO NOT MODIFY:

@@ -87,15 +87,22 @@ htseq=/srv/gs1/projects/montgomery/bliu2/tools/HTSeq-0.6.1/scripts
 python=/home/bliu2/anaconda/bin/python
 gencode14=/srv/gs1/projects/montgomery/shared/annotation/gencode.v14.annotation.gtf
 gencode21=/srv/gs1/projects/montgomery/shared/annotation/gencode.v21.annotation.gtf
-module load java 
 bt=/srv/gs1/projects/montgomery/bliu2/bioinformatics_toolbox
 brt=/srv/gs1/projects/montgomery/bliu2/brt
+vcftools=/srv/gs1/software/vcftools/0.1.12/bin
+# load modules:  
 module load samtools/1.1
+module load tabix/0.2.6
+module load java
+module load vcftools/0.1.12
+# load functions: 
 sh $bt/assert.sh 
+
 # create array to store all sorted bam file names
 cd $input_dir
 inputs=(*$input_extension) # put the file extension here. 
 i=$((SGE_TASK_ID-1))
+input=${inputs[$i]}
 output=${inputs[$i]/$input_extension/$output_extension}
 
 start=$(date)

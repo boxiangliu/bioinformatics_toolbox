@@ -10,22 +10,22 @@
 # 4. if your array jobs require large memory, enable -P large_mem and -l h_vmem=40G.
 # 
 # SCG SETTINGS: 
-# -t 1:<num of jobx>
+# -t 1-<num of jobx>
 # 
 # CMD ARGS:
 # -i	input dir
 # -o	output dir
 # 
 # MODIFY: 
-input_extension="sam"
-output_extension="sorted.bam"
+input_extension="sorted.bam"
+output_extension="alignment_summary_metrics"
 
 ################# SCG settings ################### 
 # Job Name 
-#$ -N compress_sort_and_index 
+#$ -N CollectAlignmentSummaryMetrics
 # 
 # Array Job 
-# -t 1-75
+# -t 1-7
 # 
 # Request Large Memory Machine  
 # -P large_mem
@@ -52,7 +52,6 @@ output_extension="sorted.bam"
 #$ -j y
 ####################################################
 
-# read command line arguments: 
 
 set -u 
 set -e 
@@ -73,11 +72,10 @@ while getopts ":i:o:" opt; do
 done 
 
 
-# input_dir=$1
-# output_dir=$2 
 log=$output_dir/$(basename $0 .sh).log
 
-# DO NOT MODIFY:
+
+# Paths:
 software=/srv/gs1/software/
 hg19=/srv/gs1/projects/montgomery/bliu2/shared/ucsc_hg19/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa
 gatk=$software/gatk/gatk-3.3.0/GenomeAnalysisTK.jar
@@ -89,21 +87,33 @@ htseq=/srv/gs1/projects/montgomery/bliu2/tools/HTSeq-0.6.1/scripts
 python=/home/bliu2/anaconda/bin/python
 gencode14=/srv/gs1/projects/montgomery/shared/annotation/gencode.v14.annotation.gtf
 gencode21=/srv/gs1/projects/montgomery/shared/annotation/gencode.v21.annotation.gtf
-module load java 
 bt=/srv/gs1/projects/montgomery/bliu2/bioinformatics_toolbox
 brt=/srv/gs1/projects/montgomery/bliu2/brt
+vcftools=/srv/gs1/software/vcftools/0.1.12/bin
+targeted_reference_genome=/srv/gs1/projects/montgomery/bliu2/ancestry/data/Bosh_ASW_mmPCR_2/data/genomes/targeted_reference_genome
+# load modules:  
+module load samtools/1.1
+module load tabix/0.2.6
+module load java
+module load vcftools/0.1.12
+# load functions: 
+sh $bt/assert.sh 
 
 # create array to store all sorted bam file names
 cd $input_dir
 inputs=(*$input_extension) # put the file extension here. 
 i=$((SGE_TASK_ID-1))
-sam={inputs[$i]/$input_extension/$output_extension}
+input=${inputs[$i]}
 output=${inputs[$i]/$input_extension/$output_extension}
 
 start=$(date)
 
-java -Xmx2g -jar $picard/SortSam.jar INPUT=$input_dir/${inputs[$i]} OUTPUT=/dev/stdout SORT_ORDER=coordinate VALIDATION_STRINGENCY=LENIENT| \
-java -Xmx2g -jar $picard/SamFormatConverter.jar INPUT=/dev/stdin OUTPUT=$output_dir/$output VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true
+java -Xmx4g -jar $picard/CollectAlignmentSummaryMetrics.jar \
+INPUT=$input \
+OUTPUT=$output \
+VALIDATION_STRINGENCY=LENIENT \
+REFERENCE_SEQUENCE=$hg19
 
 finish=$(date)
 touch $output_dir/$output.done; echo -e "START: $start\nFINISH: $finish" > $output_dir/$output.done
+
